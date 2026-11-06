@@ -363,7 +363,7 @@ footer { padding: 36px 0 48px; border-top: 1px solid var(--artifact-border-light
     <div class="sec-head reveal">
       <p class="eyebrow">What I focus on</p>
       <h2>Six ways the thesis becomes daily work.</h2>
-      <p>Select a focus area to see how it shows up in practice.</p>
+      <p>Hover over a focus area to see how it shows up in practice.</p>
     </div>
     <div class="focus-grid reveal">
       <div class="tabs" id="focus-tabs" role="tablist" aria-label="Focus areas" data-glean-id="focus-tabs"></div>
@@ -378,7 +378,7 @@ footer { padding: 36px 0 48px; border-top: 1px solid var(--artifact-border-light
     <div class="sec-head reveal">
       <p class="eyebrow">Built at CSG</p>
       <h2>Two AI-enabled tools that put the belief to work.</h2>
-      <p>Practical applications of the thesis to real product and business problems. Click a step, or let it run.</p>
+      <p>Practical applications of the thesis to real product and business problems. Hover over a step, or let it run.</p>
     </div>
     <div class="tools reveal" id="tools-grid"></div>
     <p class="fine">Internal CSG tools. Implementation details, customer data and environments are intentionally not shown.</p>
@@ -391,7 +391,7 @@ footer { padding: 36px 0 48px; border-top: 1px solid var(--artifact-border-light
     <div class="sec-head reveal">
       <p class="eyebrow">Journey</p>
       <h2>Twenty-plus years of building product organizations, then the systems behind them.</h2>
-      <p>Earlier in my career I served as VP of Product Management for a global B2B SaaS product suite supporting broadband and broadcasting companies. Select a role.</p>
+      <p>Earlier in my career I served as VP of Product Management for a global B2B SaaS product suite supporting broadband and broadcasting companies. Hover over a role.</p>
     </div>
     <div class="reveal" data-glean-id="journey-timeline">
       <div class="gantt" id="gantt"></div>
@@ -410,7 +410,7 @@ footer { padding: 36px 0 48px; border-top: 1px solid var(--artifact-border-light
     <div class="sec-head reveal">
       <p class="eyebrow">Toolkit</p>
       <h2>Capabilities, grouped by how I use them.</h2>
-      <p>Filter by area. Everything stays visible; the selection simply lights up.</p>
+      <p>Hover over an area to light up the matching capabilities. Everything stays visible.</p>
     </div>
     <div class="reveal">
       <div class="filters" id="filters" role="group" aria-label="Filter capabilities" data-glean-id="toolkit-filters"></div>
@@ -523,6 +523,9 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
     p.dataset.gleanId = idPrefix + '-panel-' + it.id;
     renderPanel(p, it); panelsEl.appendChild(p); panels.push(p);
     b.addEventListener('click', function(){ select(i, true); });
+    var hoverT = null;
+    b.addEventListener('mouseenter', function(){ clearTimeout(hoverT); hoverT = setTimeout(function(){ select(i, false); }, 70); });
+    b.addEventListener('mouseleave', function(){ clearTimeout(hoverT); });
     b.addEventListener('keydown', function(e){
       var n = items.length;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); select((i+1)%n, true); }
@@ -548,7 +551,7 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
     { id: 'Workflows', d: 'Processes and delivery-ready artifacts that carry business intent all the way to impact.' },
     { id: 'AI systems', d: 'A new way to design products, make decisions, serve customers, and scale expertise.' }
   ];
-  var TRAD = 'Each capability optimized on its own. Value is added up, not multiplied. Select a node to see what it contributes.';
+  var TRAD = 'Each capability optimized on its own. Value is added up, not multiplied. Hover over a node to see what it contributes.';
   var SUPER = 'People, products, data, workflows, and AI systems working together to create dramatically more value than traditional operating models allow.';
   var svg = document.getElementById('sc-svg'), NS = 'http://www.w3.org/2000/svg';
   var cx = 210, cy = 210, R = 140, pos = [];
@@ -578,6 +581,8 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
   }
   bT.addEventListener('click', function(){ mode(false); });
   bS.addEventListener('click', function(){ mode(true); });
+  bT.addEventListener('mouseenter', function(){ mode(false); });
+  bS.addEventListener('mouseenter', function(){ mode(true); });
   mode(true);
   if (!RM && 'IntersectionObserver' in window) {
     var once = new IntersectionObserver(function(es){ if (es[0].isIntersecting) { once.disconnect(); mode(false); setTimeout(function(){ mode(true); }, 900); } }, { threshold: .6 });
@@ -659,7 +664,7 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
     var cur = 0, timer = null, userTook = false;
     T.steps.forEach(function(s, i){
       var b = el('button', 'sbtn', '<span class="dot"></span><span class="t">' + s.t + '</span>'); b.type = 'button';
-      b.addEventListener('click', function(){ userTook = true; stop(); go(i); }); st.appendChild(b); btns.push(b);
+      b.addEventListener('click', function(){ userTook = true; stop(); go(i); }); b.addEventListener('mouseenter', function(){ userTook = true; stop(); go(i); }); st.appendChild(b); btns.push(b);
     });
     function go(i){
       cur = i;
@@ -741,6 +746,7 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
       b.textContent = ''; var lab = el('span', 'bar-label', 'Seilevel \u00b7 Sr Product Manager'); lab.style.left = 'calc(' + pct(r.to) + '% + 10px)'; lab.style.top = (r.lane * 46 + 2) + 'px'; gantt.appendChild(lab);
     }
     b.addEventListener('click', function(){ select(i, false); });
+    b.addEventListener('mouseenter', function(){ select(i, false); });
     gantt.appendChild(b); bars[i] = b;
   });
   var tabsEl = document.getElementById('role-tabs');
@@ -765,13 +771,16 @@ function makeTabs(tabsEl, panelsEl, items, renderPanel, idPrefix, startIdx){
   for (var k = 0; k < max; k++) CATS.forEach(function(c, ci){ var idx = all.findIndex(function(s){ return s.dataset.cat === c.id && s.textContent === c.items[k]; }); if (c.items[k] && idx >= 0) order.push(all[idx]); });
   order.forEach(function(s){ sEl.appendChild(s); });
   var btns = [];
+  var locked = 'all';
   function setFilter(id){
     btns.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.f === id); });
     order.forEach(function(s){ var hit = id === 'all' || s.dataset.cat === id; s.classList.toggle('dim', !hit); s.classList.toggle('hit', hit && id !== 'all'); });
   }
   [{ id: 'all', name: 'All' }].concat(CATS).forEach(function(c){
     var b = el('button', 'fbtn', c.name); b.type = 'button'; b.dataset.f = c.id; b.dataset.gleanId = 'filter-' + c.id;
-    b.addEventListener('click', function(){ setFilter(c.id); }); fEl.appendChild(b); btns.push(b);
+    b.addEventListener('click', function(){ locked = c.id; setFilter(c.id); });
+    b.addEventListener('mouseenter', function(){ setFilter(c.id); });
+    fEl.appendChild(b); btns.push(b);
   });
   setFilter('all');
 })();
